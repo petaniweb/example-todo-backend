@@ -22,5 +22,5 @@ app.use(express.static('public'));
 app.use(`/api/${process.env.VERSION}/`, routes);
 
 app.listen(process.env.PORT, () => {
-  console.log(`server Started at http://localhost:${process.env.PORT}/`);
+  console.log(`server started at http://localhost:${process.env.PORT}/`);
 });

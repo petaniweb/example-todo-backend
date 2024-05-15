@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { todoModel } = require("../models");
-
-const response = require("../helpers/response");
-const { todoRules } = require("../validators");
 
 const validator = require("../middlewares/validationMiddleware.js");
+const response = require("../helpers/response");
+const { todoModel } = require("../models");
+const { todoRules } = require("../validators");
 
 //Post Method
 router.post("/", todoRules.create, validator, async (req, res) => {
@@ -33,11 +32,8 @@ router.get("/", async (req, res) => {
 });
 
 //Get by ID Method
-router.get("/:id", async (req, res) => {
+router.get("/:id", todoRules.getByID, validator, async (req, res) => {
   try {
-    if (!req.params.id) {
-      return response.badRequest(req, res, "Missing required parameter: id");
-    }
     const result = await todoModel.findOne({
       _id: req.params.id,
       deleted_at: { $eq: null },
@@ -55,10 +51,6 @@ router.get("/:id", async (req, res) => {
 //Update by ID Method
 router.patch("/:id", todoRules.updateByID, validator, async (req, res) => {
   try {
-    if (!req.params.id) {
-      return response.badRequest(req, res, "Missing required parameter: id");
-    }
-
     const existingTodo = await todoModel.findOne({
       _id: req.params.id,
       deleted_at: { $eq: null },
@@ -79,12 +71,8 @@ router.patch("/:id", todoRules.updateByID, validator, async (req, res) => {
 });
 
 //Delete by ID Method
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", todoRules.deleteByID, validator, async (req, res) => {
   try {
-    if (!req.params.id) {
-      return response.badRequest(req, res, "Missing required parameter: id");
-    }
-
     const existingTodo = await todoModel.findOne({
       _id: req.params.id,
       deleted_at: { $eq: null },

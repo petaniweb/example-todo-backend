@@ -1,5 +1,6 @@
-const { query, body } = require("express-validator");
+const { param, body } = require("express-validator");
 const { validStatusValues } = require("../constant");
+const { validateObjectId } = require("../helpers/mongoose");
 
 const todoRules = {
   create: [
@@ -25,18 +26,36 @@ const todoRules = {
       .withMessage("description must be a string"),
   ],
   getAll: [],
-  getByID: [],
+  getByID: [
+    param("id")
+      .exists()
+      .withMessage("parameter id is required")
+      .bail()
+      .custom((value) => validateObjectId(value))
+      .withMessage("parameter id is not valid"),
+  ],
   updateByID: [
-    body("subject")
-      .optional(),
-    body("description")
-      .optional(),
+    param("id")
+      .exists()
+      .withMessage("parameter id is required")
+      .bail()
+      .custom((value) => validateObjectId(value))
+      .withMessage("parameter id is not valid"),
+    body("subject").optional(),
+    body("description").optional(),
     body("status")
       .optional()
       .isIn(validStatusValues)
       .withMessage(`Status must be one of: ${validStatusValues.join(", ")}`),
   ],
-  deleteBydID: [],
+  deleteByID: [
+    param("id")
+      .exists()
+      .withMessage("parameter id is required")
+      .bail()
+      .custom((value) => validateObjectId(value))
+      .withMessage("parameter id is not valid"),
+  ],
 };
 
 module.exports = todoRules;
